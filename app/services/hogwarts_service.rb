@@ -1,12 +1,20 @@
 class HogwartsService
   def initialize(house)
-    @house = house
+    @house = houses[house.to_sym]
+  end
+
+  def houses
+    { 'Griffyndor': '1',
+      'Ravenclaw': '2',
+      'Hufflepuff': '3',
+      'Slytherin': '4'
+    }
   end
 
   def conn
-    Faraday.new("http://hogwarts-it.herokuapp.com/api/v1/house/") do |f|
+    Faraday.new("https://hogwarts-as-a-service.herokuapp.com/api/v1/house/") do |f|
       f.adapter Faraday.default_adapter
-      f.params['api_key'] = ENV['api_key']
+      f.headers["x_api_key"] = ENV['x_api_key']
     end
   end
 
@@ -15,6 +23,6 @@ class HogwartsService
   end
 
   def students_json
-    JSON.parse(response.body)['data'][0]['attributes']['students']
+    JSON.parse(response.body)
   end
 end
